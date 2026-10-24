@@ -1,17 +1,19 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 
-
-file_path = r'C:\Users\dell\Downloads\retail_sales_5000.xlsx'
+file_path = r'C:\Users\dell\Downloads\ecommerce_customer_segmentation_5000.xlsx'
 df = pd.read_excel(file_path)
 
-print('Shape:', df.shape)
-print('Number of rows:', df.shape[0])
-print('Number of columns:', df.shape[1])
+recency = df['RecencyDays'].sum()
 
+print(f"Total Recency ${recency:.2f}")
 
-plot = df.plot(x='Gender_wise_product_Male', y='Gender_wise_product_Female', kind='pie', title='Retail Sales Over Time')
-print('Plot created successfully.')
+frequency = df['OrdersLast12Months'].sum()
+print(f"Total Frequency ${frequency:.2f}")
 
+monetary = df['TotalSpendLast12MonthsINR'].sum()
+print(f"Total Monetary ${monetary:.2f}")
 
-plt.show()
+rfm = recency + frequency + monetary
+
+print(f"Total RFM is: ${rfm:.2f}")
