@@ -1,8 +1,17 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 
-file_path = r'C:\Users\dell\Downloads\ecommerce_customer_segmentation_5000.xlsx'
+
+file_path = r'C:\Users\dell\Downloads\retail_sales_5000.xlsx'
 df = pd.read_excel(file_path)
 
-avg_purchase_value = df['AverageOrderValueINR'].mean()
-print(f"Average Purchase Value: ${avg_purchase_value:.2f}")
+print('Shape:', df.shape)
+print('Number of rows:', df.shape[0])
+print('Number of columns:', df.shape[1])
+
+
+plot = df.plot(x='Date', y='Total Amount', kind='line', title='Retail Sales Over Time')
+print('Plot created successfully.')
+
+
+plt.show()
