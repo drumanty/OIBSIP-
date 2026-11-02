@@ -1,31 +1,34 @@
 import pandas as pd
-import matplotlib.pyplot as plt
-
-file_path = r'C:\Users\dell\Downloads\retail_sales_5000.xlsx'
+file_path = r'C:\Users\dell\Downloads\ecommerce_customer_segmentation_5000.xlsx'
 df = pd.read_excel(file_path)
 
-raw_age =df['Age']
-age_mean = raw_age.mean()
-age_median = raw_age.median()
-age_counts = raw_age.value_counts()
-raw_gender = df['Gender']
-gender_counts = raw_gender.value_counts()
+top_customer = (df.groupby('CustomerID',dropna=False)['AverageDiscountPercent'].sum().reset_index()
 
-print("Age Mean:", age_mean)
+.rename(columns={'AverageDiscountPercent': 'TotalAverageDiscountPercent'})
 
-print("Age Median:", age_median)
+.sort_values(by='TotalAverageDiscountPercent', ascending=False)
+)
 
-print("\nGender Distribution:")
+top_customer = top_customer.head(10)
 
-print(gender_counts)
+print("Top 10 Customers with Highest Total Average Discount Percent:")
+print(top_customer)
 
-print("\nAge Distribution:")
 
-print(age_counts)
+df['CustomerID'] = df['CustomerID'].astype(str).str.strip()
 
-age_counts.plot(kind='bar', title='Age Distribution')
 
-gender_counts.plot(kind='bar', title='Gender Distribution')
+top_customer = (df.groupby('CustomerID',dropna=False)['AverageOrderValueINR'].sum().reset_index()
 
-plt.show()
+.rename(columns={'AverageOrderValueINR': 'TotalOrderValueINR'})
+
+.sort_values(by='TotalOrderValueINR', ascending=False)
+)
+
+top_customer = top_customer.head(15)
+
+print("Top 15 Customers with Highest Total Order Value:")
+print(top_customer)
+
+
 
