@@ -1,67 +1,34 @@
 import pandas as pd
-import matplotlib.pyplot as plt
 
-file_path = r'C:\Users\dell\Downloads\retail_sales_5000.xlsx'
+
+file_path = r"C:\Users\dell\Downloads\ecommerce_customer_segmentation_5000 (1).xlsx"
 df = pd.read_excel(file_path)
 
+def create_data_quality_report(df):
+    data_type = df.dtypes
+    total_rows = len(df)
+    missing_value = df.isnull().sum()
+    missing_percentage = (missing_value/total_rows)*100
+    unique_values = df.nunique()
 
 
-# Convert dates, supporting text and native Excel dates
-raw_dates = df['Date']
 
-if pd.api.types.is_numeric_dtype(raw_dates):
-    # Excel date serial numbers
-    df['Date'] = pd.to_datetime(
-        raw_dates, unit='D', origin='1899-12-30', errors='coerce'
-    )
-else:
-    df['Date'] = pd.to_datetime(
-        raw_dates.astype(str).str.strip(),
-        format='mixed',
-        dayfirst=True,
-        errors='coerce'
-    )
+    report = pd.DataFrame({
+        'Data Type': data_type,
+        'Total Rows': total_rows,
+        'Missing Value': missing_value,
+        'Missing Percentage': missing_percentage,
+        'Unique Values': unique_values
+    })
 
-# Convert sales amounts to numeric
-df['Total Amount'] = pd.to_numeric(
-    df['Total Amount'].astype(str).str.replace(',', '', regex=False),
-    errors='coerce'
-)
 
-print("\nValid dates:", df['Date'].notna().sum())
-print("Valid sales:", df['Total Amount'].notna().sum())
-print("Date range:", df['Date'].min(), "to", df['Date'].max())
+    numeric_cols = df.select_dtypes(include=['number']).columns
+    report['Min'] = df[numeric_cols].min()
+    report['Max'] = df[numeric_cols].max()
+    report['Mean'] = df[numeric_cols].mean().round(2)
+    
+    return report
 
-# Remove invalid dates and sales
-df = df.dropna(subset=['Date', 'Total Amount'])
+dq_report = create_data_quality_report(df)
 
-if df.empty:
-    print("ERROR: No valid date and sales rows found.")
-else:
-    # Group sales by month, without restricting to 2023
-    monthly_sales = (
-        df.set_index('Date')['Total Amount']
-        .resample('MS')
-        .sum()
-    )
-
-    print("\nMonthly sales:")
-    print(monthly_sales)
-
-    # Plot
-    plt.figure(figsize=(12, 6))
-    plt.plot(
-        monthly_sales.index,
-        monthly_sales.values,
-        marker='o',
-        color='crimson',
-        linewidth=2
-    )
-
-    plt.title('Monthly Retail Sales Over Time')
-    plt.xlabel('Month')
-    plt.ylabel('Total Sales Revenue')
-    plt.xticks(rotation=45)
-    plt.grid(True, linestyle='--', alpha=0.6)
-    plt.tight_layout()
-    plt.show()
+print(dq_report)
