@@ -1,11 +1,37 @@
 import pandas as pd
-import matplotlib.pyplot as plt
 
 file_path = r'C:\Users\dell\Downloads\ecommerce_customer_segmentation_5000.xlsx'
+
 df = pd.read_excel(file_path)
 
-plt.bar(df['Age'], df['PreferredCategory'])
-plt.xlabel('Age')
-plt.ylabel('Preferred Category')
-plt.title('Age vs. Preferred Category')
-plt.show()
+df['CustomerID'] = df['CustomerID'].astype(str).str.strip()
+
+
+top_customer = (df.groupby('CustomerID',dropna=False)['WebsiteVisitsLast12Months'].sum().reset_index()
+
+.rename(columns={'WebsiteVisitsLast12Months': 'TotalWebsiteVisits'})
+
+.sort_values(by='TotalWebsiteVisits', ascending=False)
+)
+
+top_customer = top_customer.head(15)
+
+print("Top 15 Customers with Highest Total Website Visits:")
+print(top_customer)
+df['CustomerID'] = df['CustomerID'].astype(str).str.strip()
+
+
+top_customer = (df.groupby('CustomerID',dropna=False)['AverageOrderValueINR'].sum().reset_index()
+
+.rename(columns={'AverageOrderValueINR': 'TotalOrderValueINR'})
+
+.sort_values(by='TotalOrderValueINR', ascending=False)
+)
+
+top_customer = top_customer.head(15)
+
+print("Top 15 Customers with Highest Total Order Value:")
+print(top_customer)
+
+
+
