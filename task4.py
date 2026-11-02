@@ -1,17 +1,16 @@
 import pandas as pd
-import matplotlib.pyplot as plt
-
-
-file_path = r'C:\Users\dell\Downloads\retail_sales_5000.xlsx'
+file_path = r'C:\Users\dell\Downloads\ecommerce_customer_segmentation_5000.xlsx'
 df = pd.read_excel(file_path)
 
-print('Shape:', df.shape)
-print('Number of rows:', df.shape[0])
-print('Number of columns:', df.shape[1])
+top_customer = (df.groupby('PreferredCategory',dropna=False)['TotalSpendLast12MonthsINR'].sum().reset_index()
 
+.rename(columns={'TotalSpendLast12MonthsINR': 'TotalSpendLast12MonthsINR'})
 
-plot = df.plot(x='Gender_wise_product_Male', y='Gender_wise_product_Female', kind='pie', title='Retail Sales Over Time')
-print('Plot created successfully.')
+.sort_values(by='TotalSpendLast12MonthsINR', ascending=False)
+)
 
+top_customer = top_customer.head(10)
 
-plt.show()
+print("Top 10 Preferred Categories with Highest Total Spend:")
+print(top_customer)
+
